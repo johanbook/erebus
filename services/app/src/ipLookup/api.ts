@@ -16,6 +16,7 @@ interface SuccessfulResponse extends BaseResponse {
   city: string;
   isp: string;
   status: "success";
+  zip: string;
 }
 
 export type ApiResponse = SuccessfulResponse | FailedResponse;

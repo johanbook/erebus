@@ -16,18 +16,8 @@ services:
       - "--accesslog.fields.headers.names.User-Agent=keep"
 
       - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.websecure.address=:443"
-
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.myresolver.acme.email=me@johanbook.com"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     network_mode: host
     volumes:
-      - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./logs/:/var/log/erebus/"
 
@@ -37,9 +27,8 @@ services:
       - "traefik.enable=true"
 
       # Target router
-      - "traefik.http.routers.app.rule=Host(`erebus.johanbook.com`)"
-      - "traefik.http.routers.app.entrypoints=websecure"
-      - "traefik.http.routers.app.tls.certresolver=myresolver"
+      - "traefik.http.routers.app.rule=Host(`localhost`)"
+      - "traefik.http.routers.app.entrypoints=web"
     environment:
       LOG_DIR: "/var/log/erebus/"
     volumes:

@@ -11,16 +11,21 @@
   "dependencies": {
     "@types/express": "^4.17.13",
     "@types/hbs": "^4.0.1",
+    "@types/lru-cache": "^5.1.1",
     "@types/morgan": "^1.9.3",
     "@types/node-fetch": "^2.5.12",
     "@types/ua-parser-js": "^0.7.36",
     "express": "^4.17.1",
     "hbs": "^4.2.0",
     "helmet": "^5.0.0",
+    "i": "^0.3.7",
+    "lru-cache": "^6.0.0",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.1",
+    "npm": "^8.3.0",
     "ts-node": "^10.4.0",
-    "ua-parser-js": "^1.0.2"
+    "ua-parser-js": "^1.0.2",
+    "winston": "^3.4.0"
   },
   "devDependencies": {
     "prettier": "^2.5.1"
