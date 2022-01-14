@@ -1,8 +1,9 @@
 version: "3.9"
 services:
   traefik:
-    image: "traefik:v2.4"
-    container_name: "traefik"
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "traefik"
     command:
       # Expose Traefik Dashboard on 8080
       - "--api.insecure=true"
@@ -13,7 +14,10 @@ services:
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/erebus/traefik.access.log"
       - "--accesslog.fields.headers.names.Host=keep"
+      - "--accesslog.fields.headers.names.Referer=keep"
       - "--accesslog.fields.headers.names.User-Agent=keep"
+      - "--log.filePath=/var/log/erebus/traefik.log"
+      - "--log.level=INFO"
 
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
@@ -25,14 +29,11 @@ services:
       #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.myresolver.acme.email=me@johanbook.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-    network_mode: host
-    volumes:
-      - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./logs/:/var/log/erebus/"
 
   app:
-    build: "./services/app"
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "app"
     labels:
       - "traefik.enable=true"
 
@@ -40,7 +41,3 @@ services:
       - "traefik.http.routers.app.rule=Host(`erebus.johanbook.com`)"
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.routers.app.tls.certresolver=myresolver"
-    environment:
-      LOG_DIR: "/var/log/erebus/"
-    volumes:
-      - "./logs/:/var/log/erebus/"

@@ -15,16 +15,14 @@ export const IP_LOGGER = winston.createLogger({
   ],
 });
 
-const LOGGER = winston.createLogger({
+export const ACCESS_LOGGER = winston.createLogger({
   level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
+  // Info message may contain newlines which we want to get rid of
+  format: winston.format.printf((info) => info.message.replace("\n","")),
   transports: [
     new winston.transports.File({
       dirname: process.env.LOG_DIR,
-      filename: "combined.log",
+      filename: "app.access.log",
     }),
     new winston.transports.Console({
       format: winston.format.simple(),
@@ -32,4 +30,6 @@ const LOGGER = winston.createLogger({
   ],
 });
 
-export default LOGGER;
+export const ACCESS_LOGGER_STREAM = {
+  write: (message: string) => ACCESS_LOGGER.info(message),
+};
