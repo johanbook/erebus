@@ -1,4 +1,8 @@
 version: "3.9"
+
+networks:
+  loki:
+
 services:
   traefik:
     extends:
@@ -41,3 +45,25 @@ services:
       - "traefik.http.routers.app.rule=Host(`erebus.johanbook.com`)"
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.routers.app.tls.certresolver=myresolver"
+
+  grafana:
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "grafana"
+    labels:
+      - "traefik.enable=true"
+
+      # Target router
+      - "traefik.http.routers.grafana.rule=Host(`grafana.erebus.johanbook.com`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls.certresolver=myresolver"
+
+  loki:
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "loki"
+
+  promtail:
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "promtail"

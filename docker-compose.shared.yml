@@ -1,4 +1,8 @@
 version: "3.9"
+
+networks:
+  loki:
+
 services:
   traefik:
     image: "traefik:v2.4"
@@ -15,3 +19,23 @@ services:
       LOG_DIR: "/var/log/erebus/"
     volumes:
       - "/var/log/erebus/:/var/log/erebus/"
+
+  grafana:
+    image: grafana/grafana:latest
+    networks:
+      - loki
+
+  loki:
+    image: grafana/loki:2.4.1
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - loki
+
+  promtail:
+    image: grafana/promtail:2.4.1
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - loki
+    volumes:
+      - ./config/promtail/config.yml:/etc/promtail/config.yml
+      - /var/log:/var/log
