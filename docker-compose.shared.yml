@@ -24,12 +24,17 @@ services:
     image: grafana/grafana:latest
     networks:
       - loki
+    volumes:
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources/
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards/
 
   loki:
     image: grafana/loki:2.4.1
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - loki
+    volumes:
+      - ./config/loki/loki.yaml:/etc/loki/local-config.yaml
 
   promtail:
     image: grafana/promtail:2.4.1
@@ -39,3 +44,33 @@ services:
     volumes:
       - ./config/promtail/config.yml:/etc/promtail/config.yml
       - /var/log:/var/log
+      - /var/lib/docker/containers/:/var/lib/docker/containers
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.rootfs=/rootfs"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    networks:
+      - loki
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    networks:
+      - loki
+    restart: unless-stopped
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml

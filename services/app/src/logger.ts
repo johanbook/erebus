@@ -1,8 +1,6 @@
 import winston from "winston";
 
-const ipFormat = winston.format.printf((info) => {
-  return `${info.timestamp} ${info.meta.ip} ${info.meta.status} ${info.meta.country} ${info.meta.city} ${info.meta.isp} ${info.meta.hostname}`;
-});
+const ipFormat = winston.format.printf((info) => JSON.stringify(info));
 
 export const IP_LOGGER = winston.createLogger({
   level: "info",
@@ -18,7 +16,7 @@ export const IP_LOGGER = winston.createLogger({
 export const ACCESS_LOGGER = winston.createLogger({
   level: "info",
   // Info message may contain newlines which we want to get rid of
-  format: winston.format.printf((info) => info.message.replace("\n","")),
+  // format: winston.format.printf((info) => info.message.replace("\n", "")),
   transports: [
     new winston.transports.File({
       dirname: process.env.LOG_DIR,

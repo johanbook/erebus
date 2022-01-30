@@ -20,7 +20,9 @@ services:
       - "--accesslog.fields.headers.names.Host=keep"
       - "--accesslog.fields.headers.names.Referer=keep"
       - "--accesslog.fields.headers.names.User-Agent=keep"
+      - "--accesslog.format=json"
       - "--log.filePath=/var/log/erebus/traefik.log"
+      - "--log.format=json"
       - "--log.level=INFO"
 
       - "--entrypoints.web.address=:80"
@@ -67,3 +69,13 @@ services:
     extends:
       file: "docker-compose.shared.yml"
       service: "promtail"
+
+  node-exporter:
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "node-exporter"
+
+  prometheus:
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "prometheus"
