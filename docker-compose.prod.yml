@@ -42,11 +42,14 @@ services:
       service: "app"
     labels:
       - "traefik.enable=true"
-
-      # Target router
       - "traefik.http.routers.app.rule=Host(`erebus.johanbook.com`)"
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.routers.app.tls.certresolver=myresolver"
+
+  db:
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "db"
 
   grafana:
     extends:
@@ -54,9 +57,7 @@ services:
       service: "grafana"
     labels:
       - "traefik.enable=true"
-
-      # Target router
-      - "traefik.http.routers.grafana.rule=Host(`grafana.erebus.johanbook.com`)"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.johanbook.com`)"
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.tls.certresolver=myresolver"
 
@@ -79,3 +80,13 @@ services:
     extends:
       file: "docker-compose.shared.yml"
       service: "prometheus"
+
+  nextcloud:
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "nextcloud"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nextcloud.rule=Host(`nextcloud.johanbook.com`)"
+      - "traefik.http.routers.nextcloud.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud.tls.certresolver=myresolver"

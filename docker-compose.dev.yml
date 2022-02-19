@@ -34,10 +34,13 @@ services:
       service: "app"
     labels:
       - "traefik.enable=true"
-
-      # Target router
       - "traefik.http.routers.app.rule=Host(`localhost`)"
       - "traefik.http.routers.app.entrypoints=web"
+
+  db:
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "db"
 
   grafana:
     extends:
@@ -45,8 +48,6 @@ services:
       service: "grafana"
     labels:
       - "traefik.enable=true"
-
-      # Target router
       - "traefik.http.routers.grafana.rule=Host(`grafana.localhost`)"
       - "traefik.http.routers.grafana.entrypoints=web"
 
@@ -69,3 +70,12 @@ services:
     extends:
       file: "docker-compose.shared.yml"
       service: "prometheus"
+
+  nextcloud:
+    extends:
+      file: "docker-compose.shared.yml"
+      service: "nextcloud"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nextcloud.rule=Host(`nextcloud.localhost`)"
+      - "traefik.http.routers.nextcloud.entrypoints=web"

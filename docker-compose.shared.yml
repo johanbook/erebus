@@ -1,13 +1,10 @@
 version: "3.9"
 
-networks:
-  loki:
-
 services:
   traefik:
     image: "traefik:v2.4"
     container_name: "traefik"
-    network_mode: host
+    network_mode: "host"
     volumes:
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -22,29 +19,32 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    networks:
-      - loki
     volumes:
-      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources/
-      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards/
+      - "./config/grafana/datasources:/etc/grafana/provisioning/datasources/:ro"
+      - "./config/grafana/dashboards:/etc/grafana/provisioning/dashboards/:ro"
+      - "./data/grafana:/var/lib/grafana:rw"
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - "./data/postgres:/var/lib/postgresql/data:rw"
 
   loki:
     image: grafana/loki:2.4.1
     command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - loki
     volumes:
       - ./config/loki/loki.yaml:/etc/loki/local-config.yaml
 
   promtail:
     image: grafana/promtail:2.4.1
     command: -config.file=/etc/promtail/config.yml
-    networks:
-      - loki
     volumes:
-      - ./config/promtail/config.yml:/etc/promtail/config.yml
-      - /var/log:/var/log
-      - /var/lib/docker/containers/:/var/lib/docker/containers
+      - "./config/promtail/config.yml:/etc/promtail/config.yml:ro"
+      - "/var/log:/var/log:ro"
+      - "/var/lib/docker/containers/:/var/lib/docker/containers:ro"
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -53,8 +53,8 @@ services:
       - "--path.rootfs=/rootfs"
       - "--path.sysfs=/host/sys"
       - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
-    networks:
-      - loki
+      - "--collector.systemd"
+      - "--collector.processes"
     restart: unless-stopped
     volumes:
       - /proc:/host/proc:ro
@@ -69,8 +69,17 @@ services:
       - "--web.console.libraries=/etc/prometheus/console_libraries"
       - "--web.console.templates=/etc/prometheus/consoles"
       - "--web.enable-lifecycle"
-    networks:
-      - loki
     restart: unless-stopped
     volumes:
       - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  nextcloud:
+    image: nextcloud
+    environment:
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_HOST=db
+    restart: always
+    volumes:
+      - "./data/nextcloud:/var/www/html:rw"
