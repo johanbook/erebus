@@ -1,0 +1,45 @@
+{
+  "type": "object",
+  "required": [
+    "DB_USERNAME",
+    "DB_PASSWORD",
+    "DOMAIN",
+    "EMAIL",
+    "LOKI_URL",
+    "SWARM_NODE_NAME_CLOUD"
+  ],
+  "properties": {
+    "CLOUD_STORAGE_PATH": {
+      "default": "$PWD/.data/cloud",
+      "type": "string"
+    },
+    "DB_USERNAME": {
+      "type": "string"
+    },
+    "DB_PASSWORD": {
+      "type": "string"
+    },
+    "DOMAIN": {
+      "type": "string"
+    },
+    "EMAIL": {
+      "type": "string",
+      "pattern": "[^@ \t\r\n]+@[^@ \t\r\n]+.[^@ \t\r\n]+"
+    },
+    "LOKI_URL": {
+      "type": "string"
+    },
+    "PLAUSIBLE_USER_NAME": {
+      "type": "string"
+    },
+    "PLAUSIBLE_PWD": {
+      "type": "string"
+    },
+    "PLAUSIBLE_SECRET": {
+      "type": "string"
+    },
+    "SWARM_NODE_NAME_CLOUD": {
+      "type": "string"
+    }
+  }
+}

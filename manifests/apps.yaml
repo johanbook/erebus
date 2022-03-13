@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  app:
+    build: "$PWD/services/app"
+    environment:
+      LOG_DIR: "/var/log/erebus/"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`erebus.$DOMAIN`)"
+      - "traefik.http.routers.app.entrypoints=web"
+    volumes:
+      - "/var/log/erebus/:/var/log/erebus/"

@@ -1,0 +1,52 @@
+version: "3.7"
+
+x-logging: &logging
+  driver: loki
+  options:
+    loki-url: "$LOKI_URL"
+    loki-external-labels: "job=analytics,container_name={{.Name}}"
+    loki-pipeline-stages: |
+      - multiline:
+          firstline: '^[a-zA-Z0-9\[\{\(]'
+
+networks:
+  analytics:
+    external: true
+  edge:
+    external: true
+
+services:
+  plausible_db:
+    image: postgres:12
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - analytics
+
+  plausible_events_db:
+    image: yandex/clickhouse-server:21.3.2.5
+    ulimits:
+      nofile:
+        soft: 262144
+    networks:
+      - analytics
+
+  plausible:
+    image: plausible/analytics:latest
+    command:
+      sh -c "sleep 10 && /entrypoint.sh db createdb && /entrypoint.sh db migrate
+      && /entrypoint.sh db init-admin && /entrypoint.sh run"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plausible.entrypoints=web"
+      - "traefik.http.routers.plausible.rule=Host(`plausible.$DOMAIN`)"
+    environment:
+      - "ADMIN_USER_EMAIL=$EMAIL"
+      - "ADMIN_USER_NAME=$PLAUSIBLE_USER_NAME"
+      - "ADMIN_USER_PWD=$PLAUSIBLE_PWD"
+      - "BASE_URL=http://plausible.$DOMAIN"
+      - "DISABLE_REGISTRATION=true"
+      - "SECRET_KEY_BASE=$PLAUSIBLE_SECRET"
+    networks:
+      - analytics
+      - edge

@@ -1,0 +1,10 @@
+# Creates a Docker network
+function create_network() {
+  docker network inspect $1 >/dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    return
+  fi
+
+  echo "Creating network '$1'"
+  docker network create --driver=overlay --attachable $1 >/dev/null
+}

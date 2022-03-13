@@ -1,0 +1,63 @@
+version: "3.9"
+
+x-logging: &logging
+  driver: loki
+  options:
+    loki-url: "$LOKI_URL"
+    loki-external-labels: "job=gateway,container_name={{.Name}}"
+    loki-pipeline-stages: |
+      - multiline:
+          firstline: '^[a-zA-Z0-9\[\{\(]'
+
+networks:
+  edge:
+    external: true
+
+services:
+  traefik:
+    logging: *logging
+    image: "traefik:v2.5"
+    command:
+      # Expose Traefik Dashboard on 8080
+      - "--accesslog=true"
+      - "--api.insecure=true"
+
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+
+      - "--entrypoints.webinsecure.address=:80"
+      - "--entrypoints.webinsecure.http.redirections.entrypoint.to=web"
+      - "--entrypoints.webinsecure.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.web.address=:443"
+      - "--entrypoints.web.http.tls.certresolver=letsencrypt"
+      - "--entryPoints.metrics.address=:8082"
+      - "--entryPoints.traefik.address=:8081"
+
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=webinsecure"
+      - "--certificatesresolvers.letsencrypt.acme.email=$EMAIL"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      # Enable this line for fake certificate
+      #- "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+
+      - "--metrics.prometheus.entrypoint=metrics"
+      - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addrouterslabels=true"
+      - "--metrics.prometheus.addServicesLabels=true"
+    deploy:
+      placement:
+        constraints: [node.hostname == $SWARM_NODE_NAME_CLOUD]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.edge-router-traefik.entrypoints=web"
+      - "traefik.http.routers.edge-router-traefik.rule=Host(`traefik.$DOMAIN`)"
+      - "traefik.http.services.edge-router-traefik.loadbalancer.server.port=8081"
+    networks:
+      - edge
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - "$PWD/.data/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"

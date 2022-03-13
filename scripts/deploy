@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+scripts/validateEnvs.js > .env
+source .env
+
+set +e
+
+source scripts/utils
+
+# Create needed networks
+create_network edge
+create_network cloud
+create_network monitoring
+
+docker-compose $@ config |
+  docker stack deploy --compose-file=- --prune srv

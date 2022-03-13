@@ -1,4 +1,4 @@
-**/node_modules
-**/.env
-data
-letsencrypt
+.env
+.data
+node_modules
+variables.json

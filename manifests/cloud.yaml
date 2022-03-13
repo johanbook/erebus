@@ -1,0 +1,53 @@
+version: "3.9"
+
+x-logging: &logging
+  driver: loki
+  options:
+    loki-url: "$LOKI_URL"
+    loki-external-labels: "job=cloud,container_name={{.Name}}"
+    loki-pipeline-stages: |
+      - multiline:
+          firstline: '^[a-zA-Z0-9\[\{\(]'
+
+networks:
+  edge:
+    external: true
+  cloud:
+    external: true
+
+services:
+  db:
+    logging: *logging
+    image: postgres:13
+    deploy:
+      placement:
+        constraints: [node.hostname == $SWARM_NODE_NAME_CLOUD]
+    environment:
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    networks:
+      - cloud
+    volumes:
+      - "$PWD/.data/postgres:/var/lib/postgresql/data:rw"
+
+  nextcloud:
+    logging: *logging
+    image: nextcloud
+    deploy:
+      placement:
+        constraints: [node.hostname == $SWARM_NODE_NAME_CLOUD]
+    environment:
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_HOST=db
+    networks:
+      - cloud
+      - edge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=edge"
+      - "traefik.http.routers.nextcloud.rule=Host(`cloud.$DOMAIN`)"
+      - "traefik.http.routers.nextcloud.entrypoints=web"
+    volumes:
+      - "$CLOUD_STORAGE_PATH:/var/www/html:rw"
