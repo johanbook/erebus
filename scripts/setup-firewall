@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+ufw default deny incoming
+ufw default allow outgoing
+
+# Services
+ufw allow 80/tcp
+ufw allow 443/tcp
+
+# Docker swarm
+ufw allow 2377/tcp
+ufw allow 7936/tcp
+ufw allow 4789/udp

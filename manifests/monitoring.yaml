@@ -34,7 +34,7 @@ services:
       placement:
         constraints: [node.hostname == $SWARM_NODE_NAME_CLOUD]
     environment:
-      - "GF_INSTALL_PLUGINS=grafana-piechart-panel"
+      - "GF_INSTALL_PLUGINS=grafana-piechart-panel,marcusolsson-csv-datasource"
     networks:
       - edge
       - monitoring
