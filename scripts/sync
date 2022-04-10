@@ -1,4 +1,12 @@
 #!/bin/bash
 # This is a script for syncing this repo to a SSH host
 
-rsync -v -a ${PWD} --exclude '.git' --exclude '/**/node_modules/'  --exclude '.env' --exclude '.data' --exclude 'variables.json' book@home:~
+rsync ${PWD} \
+	--archive \
+	--exclude '.git' \
+	--exclude '/**/node_modules/'  \
+	--exclude '.env' \
+	--exclude '.data' \
+	--exclude 'variables.json' \
+	--verbose \
+	book@home:~

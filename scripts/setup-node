@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Setup NFS
+apt-get install nfs-common
+mount -t nfs $LEADER_IP:/srv/nfs /mnt/nfs

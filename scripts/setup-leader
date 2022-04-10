@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Setup NFS
+apt-get install -y nfs-kernel-server
+mkdir -p /srv/nfs
+chown nobody:nogroup /srv/nfs
+echo "Please add '/srv/nfs' as exported share"

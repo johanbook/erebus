@@ -10,6 +10,10 @@ ufw allow 80/tcp
 ufw allow 443/tcp
 
 # Docker swarm
-ufw allow 2377/tcp
-ufw allow 7936/tcp
-ufw allow 4789/udp
+ufw allow 2377/tcp # cluster management communications
+ufw allow 7946/tcp # communication among nodes
+ufw allow 7946/udp # communication among nodes
+ufw allow 4789/udp # container ingress network.
+
+# NFS
+ufr allow 2049/tcp

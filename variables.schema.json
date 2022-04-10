@@ -13,6 +13,10 @@
       "default": "$PWD/.data/cloud",
       "type": "string"
     },
+    "DATA_STORAGE_PATH": {
+      "default": "$PWD/.data",
+      "type": "string"
+    },
     "DB_USERNAME": {
       "type": "string"
     },

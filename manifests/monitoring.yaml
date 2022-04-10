@@ -41,7 +41,7 @@ services:
     volumes:
       - "$PWD/config/grafana/datasources:/etc/grafana/provisioning/datasources/:ro"
       - "$PWD/config/grafana/dashboards:/etc/grafana/provisioning/dashboards/:ro"
-      - "$PWD/.data/grafana:/var/lib/grafana:rw"
+      - "$DATA_STORAGE_PATH/grafana:/var/lib/grafana:rw"
 
   node-exporter:
     logging: *logging
@@ -74,11 +74,8 @@ services:
     configs:
       - source: prometheus
         target: /etc/prometheus/prometheus.yml
-    deploy:
-      placement:
-        constraints: [node.hostname == $SWARM_NODE_NAME_CLOUD]
     networks:
       - edge
       - monitoring
     volumes:
-      - "$PWD/.data/prometheus:/prometheus:rw"
+      - "$DATA_STORAGE_PATH/prometheus:/prometheus:rw"

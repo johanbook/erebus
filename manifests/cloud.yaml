@@ -28,7 +28,7 @@ services:
     networks:
       - cloud
     volumes:
-      - "$PWD/.data/postgres:/var/lib/postgresql/data:rw"
+      - "$DATA_STORAGE_PATH/postgres:/var/lib/postgresql/data:rw"
 
   nextcloud:
     logging: *logging
