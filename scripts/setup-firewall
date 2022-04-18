@@ -16,4 +16,4 @@ ufw allow 7946/udp # communication among nodes
 ufw allow 4789/udp # container ingress network.
 
 # NFS
-ufr allow 2049/tcp
+ufw allow 2049/tcp

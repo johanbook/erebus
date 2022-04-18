@@ -1,0 +1,4 @@
+#!/bin/bash
+apt-get install -y nfs-common
+mount -t nfs $LEADER_IP:/srv/nfs /mnt/nfs
+echo "$LEADER_IP:/srv/nfs /mnt/nfs nfs defaults 0 0" >>/etc/fstab

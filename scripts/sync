@@ -9,4 +9,4 @@ rsync ${PWD} \
 	--exclude '.data' \
 	--exclude 'variables.json' \
 	--verbose \
-	book@home:~
+	book@home:/mnt/nfs
