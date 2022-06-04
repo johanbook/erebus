@@ -6,6 +6,9 @@
     "DOMAIN",
     "EMAIL",
     "LOKI_URL",
+    "PLAUSIBLE_USER_NAME",
+    "PLAUSIBLE_PWD",
+    "PLAUSIBLE_SECRET",
     "SWARM_NODE_NAME_CLOUD"
   ],
   "properties": {

@@ -2,7 +2,7 @@
 
 set -e
 
-scripts/validateEnvs.js > .env
+scripts/validateEnvs.js >.env
 source .env
 
 set +e
@@ -10,6 +10,7 @@ set +e
 source scripts/utils
 
 # Create needed networks
+create_network analytics
 create_network edge
 create_network cloud
 create_network monitoring
