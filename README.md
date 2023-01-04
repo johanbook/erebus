@@ -1,12 +1,15 @@
 # Erebus
 
-**Erebus** is my humble home server.
+**This project is deprecated**
+
+**Erebus** was my humble home server. It was running on several Raspberry Pis
+using Docker Swarm. However, Docker Swarm has since been deprecated.
 
 ## Preparing nodes
 
-Erebus is designed to run on multiple nodes using Docker Swarm for loadbalancing.
-Each node needs Docker CE and the Docker Loki plugin, which needs to be complied
-manually. Compile it via
+Erebus is designed to run on multiple nodes using Docker Swarm for
+loadbalancing. Each node needs Docker CE and the Docker Loki plugin, which needs
+to be complied manually. Compile it via
 
 ```sh
 git clone https://github.com/grafana/loki.git
