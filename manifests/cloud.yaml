@@ -32,7 +32,7 @@ services:
 
   nextcloud:
     logging: *logging
-    image: nextcloud
+    image: nextcloud:24.0.2
     deploy:
       placement:
         constraints: [node.hostname == $SWARM_NODE_NAME_CLOUD]
